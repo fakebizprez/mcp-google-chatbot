@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# Go build artifacts (if any stored locally, though 'go build' in Dockerfile handles this)
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Local environment files (should use .env.example as template, .env is for runtime)
+.env
+
+# IDE / Editor specific
+.idea
+.vscode
+*.iml
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Readme and other markdown files (unless specifically needed in image)
+*.md

@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env # For local development, create a .env file based on .env.example
+    volumes:
+      - .:/app # Mount source code for development (optional, primarily for builder stage)
