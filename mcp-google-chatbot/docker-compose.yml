@@ -1,10 +1,45 @@
 version: '3.8'
+
 services:
   app:
-    build: .
+    build:
+      context: . # Use the current directory (mcp-google-chatbot) as build context
+      dockerfile: Dockerfile
+    image: mcp-google-chatbot:latest # Optional: tag the image
+    container_name: mcp-google-chatbot
+    restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "8080:8080" # Map host port 8080 to container port 8080
     env_file:
-      - .env # For local development, create a .env file based on .env.example
+      - .env # Load environment variables from a .env file in this directory
+    # Alternatively, define environment variables directly:
+    # environment:
+    #   - GOOGLE_APPLICATION_CREDENTIALS=/path/in/container/to/creds.json # See volumes below
+    #   - GOOGLE_PROJECT_ID=your-project-id
+    #   - GOOGLE_CHAT_BOT_EMAIL=your-bot-email@example.com
+    #   - BEARER_TOKEN=your_mcp_bearer_token
+    #   - REFRESH_TOKEN=your_mcp_refresh_token
+    #   - TOKEN_ENDPOINT_URL=https://example.com/token
+    #   - PORT=8080
+    #   - APP_NAME=mcp-google-chatbot
+    #   - LOG_LEVEL=info
+    #   - CHAT_WEBHOOK_TOKEN=your_webhook_token # Optional
     volumes:
-      - .:/app # Mount source code for development (optional, primarily for builder stage)
+      # If GOOGLE_APPLICATION_CREDENTIALS points to a file on your host machine,
+      # you need to mount it into the container.
+      # Example:
+      # - /path/on/host/to/your-service-account-key.json:/app/service-account-key.json:ro
+      # Then set in .env: GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
+      # Ensure the path used in GOOGLE_APPLICATION_CREDENTIALS matches the container path.
+      # If GOOGLE_APPLICATION_CREDENTIALS is not a file path but the JSON content itself,
+      # then no volume mount is needed for it if it's passed via environment.
+      # However, it's best practice to use a file for credentials.
+      # For local development, you might also mount your source code if you want live-reloading
+      # (though this requires a Go setup that supports it, like air or reflex).
+      # - .:/app # Example: Mount current directory to /app in container (for dev only)
+    networks:
+      - mcp-chat-network
+
+networks:
+  mcp-chat-network:
+    driver: bridge
